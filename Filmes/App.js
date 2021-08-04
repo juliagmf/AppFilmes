@@ -1,112 +1,125 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
 
-import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import React, {useState} from  'react';
+import {Text,View} from 'react-native';
+import styled from 'styled-components/native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+const Tela = styled.View`
+  flex : 1;
+`
+const Cabecalho = styled.View`
+  background-color : #314a30;
+  height: 65px;
+  padding: 0 30px;
+  padding-top: 20px;
+  
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+`
+
+const Busca = styled.TextInput`
+  color : #fff;
+  font-size : 30px;
+`
+const Botao = styled.TouchableOpacity`
+  
+`
+const BuscarImagem = styled.Image`
+  width: 30px;
+  height: 30px;
+  
+`
+const Destaque = styled.View`
+  backgound-color: black;
+  
+`
+const Poster = styled.Image`
+  width: 300px;
+  height: 400px;
+  
+`
+const Info = styled.View`
+  backgound-color: #fff;
+  height: 300px;
+  
+`
+const Titulo = styled.Text`
+  font-size: 36px;
+  margin: 0 auto;
+  
+  
+`
+const Linha1 = styled.View`
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 10px;
+ 
+  
+`
+const Texto = styled.Text`
+  font-size: 15px;
+  
+`
+const Linha2 = styled.View`
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  
+  
+`
+const Linha3 = styled.View`
+  padding: 0 25px;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  
+  
+`
+export default function App () {
+  const [nome, alteraNome] = useState('')
+  const [filme, alteraFilme] = useState({})
+
+  const buscarFilme = async () => {
+    const requisicao = await fetch(`https://www.omdbapi.com/?apikey=36944858&t=${nome}`, );
+    const resposta = await requisicao.json()
+    alteraFilme(resposta);
+  }
+
+  return(
+    <Tela>
+      <Cabecalho>
+        <Busca placeholder="Buscar..." value={nome} onChangeText={ (filme) => {alteraNome(filme)}} placeholderTextColor="#cecece"  />  
+        <Botao activeOpacity={0.3} onPress={buscarFilme}>
+          <BuscaImagem source={require('./icons8-pesquisar-48.png')}/> 
+        </Botao>
+      </Cabecalho> 
+      <Destaque>
+        <Poster source={{uri: filme.Poster}} />
+      </Destaque>
+      <Info>
+        <Titulo>{filme.Title}</Titulo>
+        <Linha1>
+          <Texto>Ano: {filme.Year}</Texto>
+          <Texto>Duração: {filme.Runtime}</Texto>
+          <Texto>País: {filme.Country}</Texto>
+        </Linha1>
+
+        <Linha2>
+          <Texto>Gênero: {filme.Genre}</Texto>
+          <Texto>Pontuação: {filme.imdbRating}</Texto>
+        </Linha2>
+
+        <Linha3>
+          <Texto>Enredo: {filme.Plot}</Texto>
+        </Linha3>
+      </Info>
+    </Tela>
+
   );
-};
+}
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
-export default App;
